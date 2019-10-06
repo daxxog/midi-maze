@@ -1,4 +1,4 @@
 # midi-maze
 a maze game controlled by midi
 
-[Click to test](./src/index.html)
+[Click to test](./midi-maze/src/index.html)
