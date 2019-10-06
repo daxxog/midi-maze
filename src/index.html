@@ -21,7 +21,8 @@
 			}
 		</style>
 		<script type="text/javascript">
-			if(!(window.location.replace('github.io', '') === v)) {
+			var loc = window.location.href;
+			if(!(loc.replace('github.io', '') === loc)) {
 				alert('github.io user');
 			}
 		</script>
