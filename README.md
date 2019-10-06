@@ -1,4 +1,4 @@
 # midi-maze
 a maze game controlled by midi
 
-testing github-pages
+[Click to test](../blob/master/src/index.html)
