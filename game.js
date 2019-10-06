@@ -47,22 +47,6 @@ Game.object.prototype.set = function(data) {
 };
 
 Game.object.prototype.draw = function() {
-	if(this.xAccel !== 0) {
-		this.xSpeed += this.xAccel;
-	}
-
-	if(this.yAccel !== 0) {
-		this.ySpeed += this.yAccel;
-	}
-
-	if(this.xSpeed !== 0) {
-		this.x += this.xSpeed;
-	}
-
-	if(this.ySpeed !== 0) {
-		this.y += this.ySpeed;
-	}
-
 	if(this.friction !== 0) {
 		if(this.xSpeed > 0) {
 			this.xSpeed -= this.friction;
@@ -79,6 +63,22 @@ Game.object.prototype.draw = function() {
 		if(this.ySpeed < 0) {
 			this.ySpeed += this.friction;
 		}
+	}
+	
+	if(this.xAccel !== 0) {
+		this.xSpeed += this.xAccel;
+	}
+
+	if(this.yAccel !== 0) {
+		this.ySpeed += this.yAccel;
+	}
+
+	if(this.xSpeed !== 0) {
+		this.x += this.xSpeed;
+	}
+
+	if(this.ySpeed !== 0) {
+		this.y += this.ySpeed;
 	}
 
 	this.set({ left: Math.round(this.x), top: Math.round(this.y) });

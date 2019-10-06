@@ -3,14 +3,36 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>MIDI MAZE</title>
+		<style>
+			body {
+				background-color: #000000;
+				color: #FFFFFF;
+			}
+			a {
+				color: #FFFFFF;
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+			span {
+				background-color: #FFFFFF;
+				color: #000000;
+			}
+		</style>
 		<script type="text/javascript" src="./lib/js/fabric.min.js"></script>
 		<script type="text/javascript" src="./lib/js/r.min.js"></script>
 		<script tpye="text/javascript" src="mouse.js"></script>
 		<script tpye="text/javascript" src="game.js"></script>
 		<script tpye="text/javascript" src="index.js"></script>
 	</head>
-	<body bgcolor="#000000">
+	<body>
 		<center>
+			<h3>MIDI MAZE</h3>
+			<p>
+				<a href="https://github.com/daxxog/midi-maze">Github (source code)</a><span>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;</span>
+				<a href="https://github.com/daxxog/midi-maze/issues">Issues (use for class discussion)</a>
+			</p>
 			<canvas id="c" width="640" height="480"></canvas>
 		</center>
 	</body>
