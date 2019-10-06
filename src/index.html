@@ -21,13 +21,26 @@
 			}
 		</style>
 		<script type="text/javascript">
-			var loc = window.location.href;
-			if(!(loc.replace('github.io', '') === loc)) {
-				alert('github.io user');
-			}
+			(function() { //conditional script loader
+				var loc = window.location.href,
+					loadScript = function(src) {
+						var scriptjs = document.createElement('script');
+
+						scriptjs.setAttribute("type","text/javascript");
+						scriptjs.setAttribute("src", src);
+
+						document.getElementsByTagName("head")[0].appendChild(scriptjs);
+					};
+
+				if(!(loc.replace('github.io', '') === loc)) { //github.io user, use internet locations
+					loadScript("http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.4.0/fabric.min.js");
+					loadScript("https://raw.githubusercontent.com/daxxog/dom-ready/master/r.min.js");
+				} else { //local user, use local locations
+					loadScript("./lib/js/fabric.min.js");
+					loadScript("./lib/js/r.min.js");
+				}
+			})(); //scoped
 		</script>
-		<script type="text/javascript" src="./lib/js/fabric.min.js"></script>
-		<script type="text/javascript" src="./lib/js/r.min.js"></script>
 		<script tpye="text/javascript" src="mouse.js"></script>
 		<script tpye="text/javascript" src="game.js"></script>
 		<script tpye="text/javascript" src="index.js"></script>
