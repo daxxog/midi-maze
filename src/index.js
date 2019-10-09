@@ -25,7 +25,12 @@ r(function() {
 	canvas.add(line);
 
 	// create a ball object
-	Game.obj.ball = new Game.object(canvas);
+	Game.obj.ball = new Game.object(canvas, {
+		x: 200,
+		y: 100,
+		width: 20,
+		height: 20
+	});
 
 		// debug bounding box
 		Game.obj.ball.add(new fabric.Rect({
@@ -50,15 +55,31 @@ r(function() {
 				y2: mh.mouse.y
 			});
 
-			this.xAccel = -((line.x1 - line.x2)/200);
-			this.yAccel = -((line.y1 - line.y2)/200);
+			this.xAccel = -((line.x1 - line.x2)/300);
+			this.yAccel = -((line.y1 - line.y2)/300);
 			this.friction = 0.2;
 		}).setPostDraw(function() {
 			//this.x = 0;
 		});
 
-	canvas.on('mouse:move', function(options) {
-	    console.log(options.e.layerX, options.e.layerY);
+	var buildWall = function(ori) { //working on, turn a line into a boxed in wall
+		var wallz = [];
+	};
+
+	// walls
+	[
+		[100, 100, 110, 100],
+		[100, 100, 100, 200],
+		[110, 100, 110, 200],
+		[100, 200, 110, 200],
+	].forEach(function(v) {
+		var wallID = Game.obj.walls.push(new Game.object(canvas)) - 1;
+
+		Game.obj.walls[wallID].add(new fabric.Line(v, {
+			stroke: 'black'
+		}));
+
+		new Game.wall(v[0], v[1], v[2], v[3])
 	});
 
 	var tick = function() {
