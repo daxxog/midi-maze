@@ -31,7 +31,8 @@
 			r=function(e){var t=r.s!==void 0,n=e!==void 0;if(t||(r.s=[]),r.r===void 0&&(r.r=!1),document.readyState=="complete"){if(t){var i=r.s;r.s=[];for(var s=0;i.length>s;s++)i[s]();r.r=!1}n&&e()}else n?(r.s.push(e),r.r||(r.r=!0,window.setTimeout(r,10))):r.r&&window.setTimeout(r,10)}
 		</script>
 		<script type="text/javascript">
-			(function() { //conditional script loader
+			//conditional script loader
+			var csloader = function() {
 				var loc = window.location.href,
 					loadScript = function(src) {
 						var scriptjs = document.createElement('script');
@@ -40,19 +41,31 @@
 						scriptjs.setAttribute("src", src);
 
 						document.getElementsByTagName("head")[0].appendChild(scriptjs);
-					};
+					},
+					locals = [],
+					remotes = [];
 
-				if(!(loc.replace('github.io', '') === loc)) { //github.io user, use internet locations
-					loadScript("https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.4.0/fabric.min.js");
-				} else { //local user, use local locations
-					loadScript("./lib/js/fabric.min.js");
+				for(var local in libsJSONP) {
+					locals.push(local);
+					remotes.push(libsJSONP[local]);
 				}
 
+				//libraries
+				if(!(loc.replace('github.io', '') === loc)) { //github.io user, use internet locations
+					remotes.forEach(loadScript);
+				} else { //local repo, use local locations
+					locals.map(function(v) {
+						return './lib/js/' + v;
+					}).forEach(loadScript);
+				}
+
+				//other scripts
 				loadScript("mouse.js");
 				loadScript("game.js");
 				loadScript("index.js");
-			})(); //scoped
+			};
 		</script>
+		<script type="text/javascript" src="./lib/js/libs.jsonp" onload="csloader();"></script>
 	</head>
 	<body>
 		<center>

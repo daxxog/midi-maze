@@ -22,3 +22,5 @@ if(process.argv[2] === 'sh') {
 } else {
 	fs.writeFileSync('getlibs.py', pyFile, 'utf8');
 }
+
+fs.writeFileSync('libs.jsonp', 'var libsJSONP = ' + JSON.stringify(libs) + ';', 'utf8');
