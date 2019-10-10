@@ -62,17 +62,30 @@ r(function() {
 			//this.x = 0;
 		});
 
-	var buildWall = function(ori) { //working on, turn a line into a boxed in wall
-		var wallz = [];
-	};
-
-	// walls
-	[
+	var buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wall
+/*
+[
 		[100, 100, 110, 100],
 		[100, 100, 100, 200],
 		[110, 100, 110, 200],
 		[100, 200, 110, 200],
-	].forEach(function(v) {
+	]
+*/
+		var wallz = [];
+
+		wallz.push([orix - 5, oriy - 5, orix + 5, oriy - 5]);
+		wallz.push([orix - 5, oriy - 5, orix - 5, toy - 5]);
+		wallz.push([orix + 5, oriy - 5, orix + 5, toy - 5]);
+		wallz.push([orix - 5, toy - 5, orix + 5, toy - 5]);
+
+		return wallz;
+	};
+
+	// walls
+	[
+		buildWall(100,100,100,200),
+		buildWall(200,200,100,300),
+	].collapse().forEach(function(v) {
 		var wallID = Game.obj.walls.push(new Game.object(canvas)) - 1;
 
 		Game.obj.walls[wallID].add(new fabric.Line(v, {
