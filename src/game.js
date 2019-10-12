@@ -29,6 +29,70 @@ Game.intersects = function(a,b,c,d,p,q,r,s) {
   }
 };
 
+//Line class, formed by two points
+//used by buildWall function
+Game.Line = function(x1,y1,x2,y2) {
+	this.x1 = x1;
+	this.y1 = y1;
+	this.x2 = x2;
+	this.y2 = y2;
+	this.slope = (y2 - y1) / (x2 - x1),
+	this.intercept = y1 - this.slope * x1;
+};
+
+Game.Line.prototype.y = function(x, infSelect) {
+	if(this.intercept === -Infinity) {
+		return infSelect ? this.y1 : this.y2;
+	} else {
+		return this.slope*x + this.intercept;
+	}
+};
+
+Game.Line.prototype.parallel = function(offset) {
+	var newLine;
+
+	if(this.slope === Infinity) {
+		newLine = new Game.Line(this.x1 + offset, this.y1, this.x2 + offset, this.y2);
+	} else {
+		newLine = new Game.Line(this.x1,this.y1,this.x2,this.y2);
+		newLine.intercept += offset;
+	}
+
+	return newLine;
+};
+
+//gets all the the points between two points by plugging integers into a Y slope equation of the line
+Game.pointsBetween = function(x1,y1,x2,y2,forceRange) {
+	var slope = (y2 - y1) / (x2 - x1),
+		intercept = y1 - slope * x1,
+		range = (typeof forceRange === 'number') ? forceRange : Math.abs(x2 - x1),
+
+		points = [];
+
+	for(var i = 0; i<=range; i++) {
+		points.push([x1 + i, ((x1 + i) * slope) + intercept]);
+	}
+
+	return points;
+};
+
+/* working on*/
+
+//runs Game.pointsBetween twice and gives us a pretty Object Array format
+Game.pointsBetween2 = function(a,b,c,d,p,q,r,s) {
+	var p1 = Game.pointsBetween(a,b,c,d,Math.abs(a - c)),
+		p2 = Game.pointsBetween(p,q,r,s,Math.abs(a - c));
+
+	return p1.map(function(v,i) {
+		return {
+			x: v[0],
+			y: v[1],
+			xt: p2[i][0],
+			yt: p2[i][1]
+		}
+	});
+};
+
 Game.wall = function(x1, y1, x2, y2) {
 	this.x1 = x1;
 	this.y1 = y1;
@@ -83,6 +147,12 @@ Game.object.prototype.set = function(data) {
 	return this;
 };
 
+Game.object.prototype.debug = function() {
+	console.log(Game.pointsBetween2(this.x,  this.y  + this.height, this.x  + this.width, this.y  + this.height,
+							this.xt, this.yt + this.height, this.xt + this.width, this.yt + this.height
+		));
+}
+
 //this stuff handles object movement more than drawing
 Game.object.prototype.draw = function() {
 
@@ -123,12 +193,33 @@ Game.object.prototype.draw = function() {
 
 	//check for walls
 	var intersections = [],
-		cwall = {};
+		cwall = {},
+		checkWall = function(v) {
+			intersections.push(Game.intersects(v.x,v.y,v.xt,v.yt,cwall.x1,cwall.y1,cwall.x2,cwall.y2));
+		};
+
 	for(var wall in Game.walls) {
 		cwall = Game.walls[wall];
 
-		intersections.push(Game.intersects(this.x,this.y,this.xt,this.yt,cwall.x1,cwall.y1,cwall.x2,cwall.y2));
+		//north wall of bounding box
+		Game.pointsBetween2(this.x,  this.y,  this.x  + this.width, this.y,
+							this.xt, this.yt, this.xt + this.width, this.yt
+		).forEach(checkWall);
 
+		//south wall of bounding box
+		Game.pointsBetween2(this.x,  this.y  + this.height, this.x  + this.width, this.y  + this.height,
+							this.xt, this.yt + this.height, this.xt + this.width, this.yt + this.height
+		).forEach(checkWall);
+		
+
+		//need to add east and west walls
+		//will need slope "magic" to solve this
+		//maybe if slope=Infinity then flip the line (y=x and x=y)
+		//then solve for x with new slope... slope = 0 y = intercept
+		//and flip again!
+
+
+		/*
 		intersections.push(Game.intersects(this.x +this.width,this.y,
 										   this.xt+this.width,this.yt,cwall.x1,cwall.y1,cwall.x2,cwall.y2));
 
@@ -137,6 +228,8 @@ Game.object.prototype.draw = function() {
 
 		intersections.push(Game.intersects(this.x +this.width,this.y +this.height,
 										   this.xt+this.width,this.yt+this.height,cwall.x1,cwall.y1,cwall.x2,cwall.y2));
+		*/
+
 	}
 
 	//are we going to collide with any walls?

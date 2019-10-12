@@ -26,7 +26,7 @@ r(function() {
 
 	// create a ball object
 	Game.obj.ball = new Game.object(canvas, {
-		x: 200,
+		x: 300,
 		y: 100,
 		width: 20,
 		height: 20
@@ -63,20 +63,26 @@ r(function() {
 		});
 
 	var buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wall
-/*
-[
-		[100, 100, 110, 100],
-		[100, 100, 100, 200],
-		[110, 100, 110, 200],
-		[100, 200, 110, 200],
-	]
-*/
-		var wallz = [];
+		var wallz = [],
+			baseLine = new Game.Line(orix, oriy, tox, toy),
+			thickness = 5;
+			pLine1 = baseLine.parallel(thickness),
+			pLine2 = baseLine.parallel(-1*thickness);
 
-		wallz.push([orix - 5, oriy - 5, orix + 5, oriy - 5]);
-		wallz.push([orix - 5, oriy - 5, orix - 5, toy - 5]);
-		wallz.push([orix + 5, oriy - 5, orix + 5, toy - 5]);
-		wallz.push([orix - 5, toy - 5, orix + 5, toy - 5]);
+		//original line
+		//wallz.push([orix, oriy, tox, toy]);
+
+		//pLine1 (top)
+		wallz.push([pLine1.x1, pLine1.y(pLine1.x1), pLine1.x2, pLine1.y(pLine1.x2, true)]);
+
+		//pLine2 (bottom)
+		wallz.push([pLine2.x1, pLine2.y(pLine2.x1), pLine2.x2, pLine2.y(pLine2.x2, true)]);
+
+		//edge1
+		wallz.push([pLine1.x1, pLine1.y(pLine1.x1, true), pLine2.x1, pLine2.y(pLine2.x1, true)]);
+
+		//edge2
+		wallz.push([pLine1.x2, pLine1.y(pLine1.x2), pLine2.x2, pLine2.y(pLine2.x2)]);
 
 		return wallz;
 	};
@@ -84,7 +90,10 @@ r(function() {
 	// walls
 	[
 		buildWall(100,100,100,200),
+		buildWall(100,100,200,100),
 		buildWall(200,200,100,300),
+		buildWall(300,300,350,350),
+		buildWall(200,200,400,200),
 	].collapse().forEach(function(v) {
 		var wallID = Game.obj.walls.push(new Game.object(canvas)) - 1;
 
