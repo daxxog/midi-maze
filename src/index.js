@@ -34,8 +34,8 @@ r(function() {
 	Game.obj.ball = new Game.object(canvas, {
 		x: 300,
 		y: 100,
-		width: 20,
-		height: 20
+		width: 16,
+		height: 16
 	});
 
 		// debug bounding box
@@ -44,8 +44,8 @@ r(function() {
 			  left: Game.obj.ball.x,
 			  top: Game.obj.ball.y,
 			  fill: 'red',
-			  width: 20,
-			  height: 20
+			  width: Game.obj.ball.width,
+			  height: Game.obj.ball.height
 			}));
 		}
 
@@ -54,7 +54,7 @@ r(function() {
 		  left: Game.obj.ball.x,
 		  top: Game.obj.ball.y,
 		  fill: 'black',
-		  radius: 20 / 2
+		  radius: Game.obj.ball.width / 2
 		})).setPreDraw(function() {
 			aLine = new Game.Line(Game.obj.ball.x, Game.obj.ball.y, mh.mouse.x, mh.mouse.y);
 			if(DEBUG) {
@@ -70,9 +70,9 @@ r(function() {
 	var buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wall
 		var wallz = [],
 			baseLine = new Game.Line(orix, oriy, tox, toy),
-			thickness = 5;
+			thickness = 32;
 			pLine1 = baseLine,
-			pLine2 = baseLine.parallel(2*thickness);
+			pLine2 = baseLine.parallel(thickness);
 
 		//original line
 		//wallz.push([orix, oriy, tox, toy]);
