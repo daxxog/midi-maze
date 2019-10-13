@@ -66,8 +66,8 @@ r(function() {
 		var wallz = [],
 			baseLine = new Game.Line(orix, oriy, tox, toy),
 			thickness = 5;
-			pLine1 = baseLine.parallel(thickness),
-			pLine2 = baseLine.parallel(-1*thickness);
+			pLine1 = baseLine,
+			pLine2 = baseLine.parallel(2*thickness);
 
 		//original line
 		//wallz.push([orix, oriy, tox, toy]);
@@ -94,6 +94,7 @@ r(function() {
 		buildWall(200,200,100,300),
 		buildWall(300,300,350,350),
 		buildWall(200,200,400,200),
+		buildWall(100,300,300,300),
 	].collapse().forEach(function(v) {
 		var wallID = Game.obj.walls.push(new Game.object(canvas)) - 1;
 
