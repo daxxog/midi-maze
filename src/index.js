@@ -1,4 +1,6 @@
 r(function() {
+	var DEBUG = false;
+
 	// create a wrapper around native canvas element (with id="c")
 	var canvas = new fabric.StaticCanvas('c');
 
@@ -17,12 +19,16 @@ r(function() {
 	// add it to the canvas
 	canvas.add(Game.bg);
 	
-	//create a line and add it
-	var line = new fabric.Line([0, 0, 40, 40], {
-	  stroke: 'green'
-	});
+	//debug accel line
+	if(DEBUG) {
+		var line = new fabric.Line([0, 0, 40, 40], {
+		  stroke: 'green'
+		});
 
-	canvas.add(line);
+		canvas.add(line);
+	}
+
+	var aLine = new Game.Line(0,0,0,0);
 
 	// create a ball object
 	Game.obj.ball = new Game.object(canvas, {
@@ -33,13 +39,15 @@ r(function() {
 	});
 
 		// debug bounding box
-		Game.obj.ball.add(new fabric.Rect({
-		  left: Game.obj.ball.x,
-		  top: Game.obj.ball.y,
-		  fill: 'red',
-		  width: 20,
-		  height: 20
-		}));
+		if(DEBUG) {
+			Game.obj.ball.add(new fabric.Rect({
+			  left: Game.obj.ball.x,
+			  top: Game.obj.ball.y,
+			  fill: 'red',
+			  width: 20,
+			  height: 20
+			}));
+		}
 
 		// a circle
 		Game.obj.ball.add(new fabric.Circle({
@@ -48,18 +56,15 @@ r(function() {
 		  fill: 'black',
 		  radius: 20 / 2
 		})).setPreDraw(function() {
-			line.set({
-				x1: Game.obj.ball.x,
-				y1: Game.obj.ball.y,
-				x2: mh.mouse.x,
-				y2: mh.mouse.y
-			});
+			aLine = new Game.Line(Game.obj.ball.x, Game.obj.ball.y, mh.mouse.x, mh.mouse.y);
+			if(DEBUG) {
+				line.set(aLine.getSetter());
+			}
 
-			this.xAccel = -((line.x1 - line.x2)/300);
-			this.yAccel = -((line.y1 - line.y2)/300);
+			this.xAccel = -((aLine.x1 - aLine.x2)/300);
+			this.yAccel = -((aLine.y1 - aLine.y2)/300);
 			this.friction = 0.2;
 		}).setPostDraw(function() {
-			//this.x = 0;
 		});
 
 	var buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wall

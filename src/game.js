@@ -41,7 +41,7 @@ Game.Line = function(x1,y1,x2,y2) {
 };
 
 Game.Line.prototype.y = function(x, infSelect) {
-	if(this.intercept === -Infinity) {
+	if(Math.abs(this.slope) === Infinity) {
 		return infSelect ? this.y1 : this.y2;
 	} else {
 		return this.slope*x + this.intercept;
@@ -51,7 +51,7 @@ Game.Line.prototype.y = function(x, infSelect) {
 Game.Line.prototype.parallel = function(offset) {
 	var newLine;
 
-	if(this.slope === Infinity) {
+	if(Math.abs(this.slope) === Infinity) {
 		newLine = new Game.Line(this.x1 + offset, this.y1, this.x2 + offset, this.y2);
 	} else {
 		newLine = new Game.Line(this.x1,this.y1,this.x2,this.y2);
@@ -61,34 +61,57 @@ Game.Line.prototype.parallel = function(offset) {
 	return newLine;
 };
 
+Game.Line.prototype.getSetter = function() {
+	return {
+		x1: this.x1,
+		y1: this.y1,
+		x2: this.x2,
+		y2: this.y2
+	}
+};
+
 //gets all the the points between two points by plugging integers into a Y slope equation of the line
+//note, the points must be in least to greatest order for this to work!
 Game.pointsBetween = function(x1,y1,x2,y2,forceRange) {
 	var slope = (y2 - y1) / (x2 - x1),
 		intercept = y1 - slope * x1,
 		range = (typeof forceRange === 'number') ? forceRange : Math.abs(x2 - x1),
+		points = [],
+		swap = {};
 
-		points = [];
+	if(Math.abs(slope) === Infinity) { //slope "magic"
+		swap = Game.pointsBetween(y1,x1,y2,x2,forceRange); //notice we are swaping X and Y !
 
-	for(var i = 0; i<=range; i++) {
-		points.push([x1 + i, ((x1 + i) * slope) + intercept]);
+		swap.points = swap.points.map(function(v) {
+				return v.reverse(); //and swaping back !
+		});
+
+		return swap;
+	} else {
+		for(var i = 0; i<=range; i++) {
+			points.push([x1 + i, ((x1 + i) * slope) + intercept]);
+		}
+
+		return {
+			points: points,
+			slope: slope,
+			intercept: intercept,
+			range: range
+		};
 	}
-
-	return points;
 };
-
-/* working on*/
 
 //runs Game.pointsBetween twice and gives us a pretty Object Array format
 Game.pointsBetween2 = function(a,b,c,d,p,q,r,s) {
-	var p1 = Game.pointsBetween(a,b,c,d,Math.abs(a - c)),
-		p2 = Game.pointsBetween(p,q,r,s,Math.abs(a - c));
+	var p1 = Game.pointsBetween(a,b,c,d),
+		p2 = Game.pointsBetween(p,q,r,s,p1.range);
 
-	return p1.map(function(v,i) {
+	return p1.points.map(function(v,i) {
 		return {
 			x: v[0],
 			y: v[1],
-			xt: p2[i][0],
-			yt: p2[i][1]
+			xt: p2.points[i][0],
+			yt: p2.points[i][1]
 		}
 	});
 };
@@ -148,8 +171,8 @@ Game.object.prototype.set = function(data) {
 };
 
 Game.object.prototype.debug = function() {
-	console.log(Game.pointsBetween2(this.x,  this.y  + this.height, this.x  + this.width, this.y  + this.height,
-							this.xt, this.yt + this.height, this.xt + this.width, this.yt + this.height
+	console.log(Game.pointsBetween2(this.x  + this.width,  this.y  + this.height, this.x  + this.width, this.y,
+							this.xt + this.width,  this.yt + this.height, this.xt + this.width, this.yt
 		));
 }
 
@@ -201,6 +224,7 @@ Game.object.prototype.draw = function() {
 	for(var wall in Game.walls) {
 		cwall = Game.walls[wall];
 
+
 		//north wall of bounding box
 		Game.pointsBetween2(this.x,  this.y,  this.x  + this.width, this.y,
 							this.xt, this.yt, this.xt + this.width, this.yt
@@ -210,7 +234,16 @@ Game.object.prototype.draw = function() {
 		Game.pointsBetween2(this.x,  this.y  + this.height, this.x  + this.width, this.y  + this.height,
 							this.xt, this.yt + this.height, this.xt + this.width, this.yt + this.height
 		).forEach(checkWall);
-		
+
+		//east wall of bounding box
+		Game.pointsBetween2(this.x  + this.width,  this.y, this.x  + this.width,  this.y  + this.height,
+							this.xt + this.width,  this.yt, this.xt + this.width, this.yt + this.height
+		).forEach(checkWall);
+
+		//west wall of bounding box
+		Game.pointsBetween2(this.x,  this.y, this.x,   this.y  + this.height,
+							this.xt, this.yt, this.xt, this.yt + this.height
+		).forEach(checkWall);
 
 		//need to add east and west walls
 		//will need slope "magic" to solve this
@@ -228,7 +261,7 @@ Game.object.prototype.draw = function() {
 
 		intersections.push(Game.intersects(this.x +this.width,this.y +this.height,
 										   this.xt+this.width,this.yt+this.height,cwall.x1,cwall.y1,cwall.x2,cwall.y2));
-		*/
+*/		
 
 	}
 
