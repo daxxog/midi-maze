@@ -67,48 +67,8 @@ r(function() {
 		}).setPostDraw(function() {
 		});
 
-	var buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wall
-		var wallz = [],
-			baseLine = new Game.Line(orix, oriy, tox, toy),
-			thickness = 32;
-			pLine1 = baseLine,
-			pLine2 = baseLine.parallel(thickness);
-
-		//original line
-		//wallz.push([orix, oriy, tox, toy]);
-
-		//pLine1 (top)
-		wallz.push([pLine1.x1, pLine1.y(pLine1.x1), pLine1.x2, pLine1.y(pLine1.x2, true)]);
-
-		//pLine2 (bottom)
-		wallz.push([pLine2.x1, pLine2.y(pLine2.x1), pLine2.x2, pLine2.y(pLine2.x2, true)]);
-
-		//edge1
-		wallz.push([pLine1.x1, pLine1.y(pLine1.x1, true), pLine2.x1, pLine2.y(pLine2.x1, true)]);
-
-		//edge2
-		wallz.push([pLine1.x2, pLine1.y(pLine1.x2), pLine2.x2, pLine2.y(pLine2.x2)]);
-
-		return wallz;
-	};
-
 	// walls
-	[
-		buildWall(100,100,100,200),
-		buildWall(100,100,200,100),
-		buildWall(200,200,100,300),
-		buildWall(300,300,350,350),
-		buildWall(200,200,400,200),
-		buildWall(100,300,300,300),
-	].collapse().forEach(function(v) {
-		var wallID = Game.obj.walls.push(new Game.object(canvas)) - 1;
-
-		Game.obj.walls[wallID].add(new fabric.Line(v, {
-			stroke: 'black'
-		}));
-
-		new Game.wall(v[0], v[1], v[2], v[3])
-	});
+	Game.buildMaze(canvas, MazeData);
 
 	var tick = function() {
 		Game.obj.ball.preDraw();

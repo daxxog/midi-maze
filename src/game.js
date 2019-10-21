@@ -170,11 +170,122 @@ Game.object.prototype.set = function(data) {
 	return this;
 };
 
-Game.object.prototype.debug = function() {
-	console.log(Game.pointsBetween2(this.x  + this.width,  this.y  + this.height, this.x  + this.width, this.y,
-							this.xt + this.width,  this.yt + this.height, this.xt + this.width, this.yt
-		));
-}
+Game.debug = function() {
+	return (new Array(15)).fill(0).map(function() {
+		return (new Array(20)).fill(0);
+	});
+};
+
+Game.buildMaze = function(canvas, mazeData) {
+	Game.findWalls(mazeData).map(function(v) {
+		return Game.buildWall(v[0] * 32, v[1] * 32, v[2] * 32, v[3] * 32);
+	}).collapse().forEach(function(v) {
+		var wallID = Game.obj.walls.push(new Game.object(canvas)) - 1;
+
+		Game.obj.walls[wallID].add(new fabric.Line(v, {
+			stroke: 'black'
+		}));
+
+		new Game.wall(v[0], v[1], v[2], v[3])
+	});
+};
+
+Game.findWalls = function(mazeData) {
+	var skipa = {},
+		skipb = {},
+		skipc = {},
+		skipd = {},
+		lines = [];
+
+	mazeData.forEach(function(v, i, a) {
+		v.forEach(function(w, j, b) {
+			var testa = 1, //horizontal
+				testb = 1, //vertical
+				testc = 1, //diagonal \
+				testd = 1; //diagonal /
+
+			if((w === 1) && (skipa[[i,j].join('-')] !== true)) {
+
+				//detect horizontal walls
+				while(b[j + testa] === w) {
+					skipa[[i,j + testa].join('-')] = true;
+					testa++;
+				}
+
+				//push found horizontal walls
+				if(testa > 2) {
+					lines.push([j, i, j + testa, i]);
+				}
+			}
+
+			if((w === 1) && (skipb[[i,j].join('-')] !== true)) {
+				//detect vertical walls
+				while((a.length > i + testb) && (a[i + testb][j] === w)) {
+					skipb[[i + testb,j].join('-')] = true;
+					testb++;
+				}
+
+				//push found vertical walls
+				if(testb > 2) {
+					lines.push([j, i, j, i + testb]);
+				}
+			}
+
+			if((w === 1) && (skipc[[i,j].join('-')] !== true)) {
+				//detect diagonal \ walls
+				while((a.length > i + testc) && (a[i + testc][j + testc] === w)) {
+					skipc[[i + testc,j + testc].join('-')] = true;
+					testc++;
+				}
+
+				//push found diagonal \ walls
+				if(testc > 2) {
+					lines.push([j, i, j + testc, i + testc]);
+				}
+			}
+
+			if((w === 1) && (skipd[[i,j].join('-')] !== true)) {
+				//detect diagonal / walls
+				while((a.length > i + testd) && (a[i + testd][j - testd] === w)) {
+					skipd[[i + testd,j - testd].join('-')] = true;
+					testd++;
+				}
+
+				//push found diagonal / walls
+				if(testd > 2) {
+					lines.push([j, i, j - testd, i + testd]);
+				}
+			}
+		});
+	});
+
+	return lines;
+};
+
+Game.buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wall
+	var wallz = [],
+		baseLine = new Game.Line(orix, oriy, tox, toy),
+		thickness = 32;
+		pLine1 = baseLine,
+		pLine2 = baseLine.parallel(thickness);
+
+	//original line
+	//wallz.push([orix, oriy, tox, toy]);
+
+	//pLine1 (top)
+	wallz.push([pLine1.x1, pLine1.y(pLine1.x1), pLine1.x2, pLine1.y(pLine1.x2, true)]);
+
+	//pLine2 (bottom)
+	wallz.push([pLine2.x1, pLine2.y(pLine2.x1), pLine2.x2, pLine2.y(pLine2.x2, true)]);
+
+	//edge1
+	wallz.push([pLine1.x1, pLine1.y(pLine1.x1, true), pLine2.x1, pLine2.y(pLine2.x1, true)]);
+
+	//edge2
+	wallz.push([pLine1.x2, pLine1.y(pLine1.x2), pLine2.x2, pLine2.y(pLine2.x2)]);
+
+	return wallz;
+};
 
 //this stuff handles object movement more than drawing
 Game.object.prototype.draw = function() {
