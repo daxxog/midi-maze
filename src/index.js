@@ -1,5 +1,5 @@
 r(function() {
-	var DEBUG = false;
+	var DEBUG = true;
 
 	// create a wrapper around native canvas element (with id="c")
 	var canvas = new fabric.StaticCanvas('c');
@@ -69,14 +69,55 @@ r(function() {
 		}).setPostDraw(function() {
 		});
 
+	// create an objective object
+	var objectiveInit = Game.findID(Maze, 3);
+
+	Game.obj.objective = new Game.object(canvas, {
+		x: objectiveInit.x,
+		y: objectiveInit.y,
+		width: 16,
+		height: 16
+	});
+
+		// debug bounding box
+		if(DEBUG) {
+			Game.obj.objective.add(new fabric.Rect({
+			  left: Game.obj.objective.x,
+			  top: Game.obj.objective.y,
+			  fill: 'red',
+			  width: Game.obj.objective.width,
+			  height: Game.obj.objective.height
+			}));
+		}
+
+	Game.obj.objective.add(new fabric.Circle({
+		left: Game.obj.objective.x,
+		top: Game.obj.objective.y,
+		fill: 'green',
+		radius: Game.obj.objective.width / 2
+	})).onIntersect("ball", function() {
+		alert('good job');
+	});
+
 	// walls
 	Game.buildMaze(canvas, Maze.Data);
 
 	var tick = function() {
-		Game.obj.ball.preDraw();
-		Game.obj.ball.draw();
+		for(var objName in Game.obj) {
+			if(objName !== 'walls') {
+				Game.obj[objName].preDraw();
+				Game.obj[objName].draw();
+			}
+		}
+
 		canvas.renderAll();
-		Game.obj.ball.postDraw();
+
+		for(var objName in Game.obj) {
+			if(objName !== 'walls') {
+				Game.obj[objName].postDraw();
+			}
+		}
+
 		Game.ticks++;
 
 		setTimeout(tick, Game.tickspace);

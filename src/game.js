@@ -143,6 +143,7 @@ Game.object = function(canvas, attr) {
 	this.friction = 0;
 
 	this.postDraw = this.preDraw = function () {};
+	this.doOnIntersect = {};
 
 	if(typeof attr === 'object') {
 		for(var key in attr) {
@@ -304,6 +305,46 @@ Game.buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wal
 	return wallz;
 };
 
+//return the bounding box for the object
+//---WIP
+Game.object.prototype.getBounds = function(motion) {
+	var allPoints = [],
+		pushPoints = function(v) {
+			allPoints.push(v);
+		};
+
+	if(motion === true) {
+		//north wall of bounding box
+		Game.pointsBetween2(this.x,  this.y,  this.x  + this.width, this.y,
+							this.xt, this.yt, this.xt + this.width, this.yt
+		).forEach(pushPoints);
+
+		//south wall of bounding box
+		Game.pointsBetween2(this.x,  this.y  + this.height, this.x  + this.width, this.y  + this.height,
+							this.xt, this.yt + this.height, this.xt + this.width, this.yt + this.height
+		).forEach(pushPoints);
+
+		//east wall of bounding box
+		Game.pointsBetween2(this.x  + this.width,  this.y, this.x  + this.width,  this.y  + this.height,
+							this.xt + this.width,  this.yt, this.xt + this.width, this.yt + this.height
+		).forEach(pushPoints);
+
+		//west wall of bounding box
+		Game.pointsBetween2(this.x,  this.y, this.x,   this.y  + this.height,
+							this.xt, this.yt, this.xt, this.yt + this.height
+		).forEach(pushPoints);
+	} else {
+		allPoints.push({
+			x: this.x,
+			y: this.y,
+			xt: this.x + this.width,
+			yt: this.y
+		});
+	}
+
+	return allPoints;
+};
+
 //this stuff handles object movement more than drawing
 Game.object.prototype.draw = function() {
 
@@ -340,6 +381,13 @@ Game.object.prototype.draw = function() {
 	}
 	if(this.ySpeed !== 0) {
 		this.yt += this.ySpeed;
+	}
+
+	//check for other objects
+	for(var objName in this.doOnIntersect) {
+		var oIntersects = [];
+
+		//console.log(objName, Game.obj[objName]);
 	}
 
 	//check for walls
@@ -412,6 +460,12 @@ Game.object.prototype.draw = function() {
 	}
 
 	this.set({ left: Math.round(this.x), top: Math.round(this.y) });
+};
+
+Game.object.prototype.onIntersect = function(withObjName, fx) {
+	this.doOnIntersect[withObjName] = fx;
+
+	return this;
 };
 
 Game.object.prototype.setPreDraw = function(fx) {
