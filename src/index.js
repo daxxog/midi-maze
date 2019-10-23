@@ -1,5 +1,6 @@
 r(function() {
-	var DEBUG = true;
+	var DEBUG = false,
+		alertOne = true;
 
 	// create a wrapper around native canvas element (with id="c")
 	var canvas = new fabric.StaticCanvas('c');
@@ -37,7 +38,8 @@ r(function() {
 		x: ballInit.x,
 		y: ballInit.y,
 		width: 16,
-		height: 16
+		height: 16,
+		solid: true
 	});
 
 		// debug bounding box
@@ -76,7 +78,8 @@ r(function() {
 		x: objectiveInit.x,
 		y: objectiveInit.y,
 		width: 16,
-		height: 16
+		height: 16,
+		solid: true
 	});
 
 		// debug bounding box
@@ -95,8 +98,12 @@ r(function() {
 		top: Game.obj.objective.y,
 		fill: 'green',
 		radius: Game.obj.objective.width / 2
-	})).onIntersect("ball", function() {
-		alert('good job');
+	})).onIntersect(Game.obj.ball, function() {
+		if(alertOne) {
+			alert('good job');
+
+			alertOne = false;
+		}
 	});
 
 	// walls
