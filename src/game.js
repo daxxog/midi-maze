@@ -262,10 +262,27 @@ Game.findWalls = function(mazeData) {
 	return lines;
 };
 
+Game.findID = function(maze, objID) {
+	var found;
+
+	maze.Data.forEach(function(v, i) {
+		v.forEach(function(w, j) {
+			if(w === objID) {
+				found = {
+					x: j * maze.Scale,
+					y: i * maze.Scale
+				};
+			}
+		})
+	});
+
+	return found;
+};
+
 Game.buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wall
 	var wallz = [],
 		baseLine = new Game.Line(orix, oriy, tox, toy),
-		thickness = 32;
+		thickness = Maze.Scale;
 		pLine1 = baseLine,
 		pLine2 = baseLine.parallel(thickness);
 

@@ -31,9 +31,11 @@ r(function() {
 	var aLine = new Game.Line(0,0,0,0);
 
 	// create a ball object
+	var ballInit = Game.findID(Maze, 2);
+
 	Game.obj.ball = new Game.object(canvas, {
-		x: 300,
-		y: 100,
+		x: ballInit.x,
+		y: ballInit.y,
 		width: 16,
 		height: 16
 	});
@@ -68,7 +70,7 @@ r(function() {
 		});
 
 	// walls
-	Game.buildMaze(canvas, MazeData);
+	Game.buildMaze(canvas, Maze.Data);
 
 	var tick = function() {
 		Game.obj.ball.preDraw();
