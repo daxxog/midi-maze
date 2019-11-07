@@ -31,20 +31,6 @@
 			r=function(e){var t=r.s!==void 0,n=e!==void 0;if(t||(r.s=[]),r.r===void 0&&(r.r=!1),document.readyState=="complete"){if(t){var i=r.s;r.s=[];for(var s=0;i.length>s;s++)i[s]();r.r=!1}n&&e()}else n?(r.s.push(e),r.r||(r.r=!0,window.setTimeout(r,10))):r.r&&window.setTimeout(r,10)}
 		</script>
 		<script type="text/javascript">
-			//hacky prototypes
-
-			//Array.prototype.collapse
-			//based on: https://stackoverflow.com/a/19191542
-			Array.prototype.collapse = function() {
-				var arr  = this,
-				    arr2 = [];
-
-				arr2 = (arr2.concat.apply(arr2, arr)).filter(Boolean);
-
-				return arr2;
-			};
-		</script>
-		<script type="text/javascript">
 			//conditional script loader
 			var csloader = function() {
 				var loc = window.location.href,

@@ -69,7 +69,7 @@ r(function() {
 			this.yAccel = -((aLine.y1 - aLine.y2)/300);
 			this.friction = 0.2;
 		}).setPostDraw(function() {
-		});
+		}).save();
 
 	// create an objective object
 	var objectiveInit = Game.findID(Maze, 3);
@@ -104,6 +104,37 @@ r(function() {
 
 			alertOne = false;
 		}
+	});
+
+	// create an hazard object
+	Game.findIDs(Maze, 4).forEach(function(hazardInit, i) {
+		Game.obj["hazard_" + i] = new Game.object(canvas, {
+			x: hazardInit.x,
+			y: hazardInit.y,
+			width: 32,
+			height: 32,
+			solid: true
+		});
+
+			// debug bounding box
+			if(DEBUG) {
+				Game.obj["hazard_" + i].add(new fabric.Rect({
+				  left: Game.obj["hazard_" + i].x,
+				  top: Game.obj["hazard_" + i].y,
+				  fill: 'green',
+				  width: Game.obj["hazard_" + i].width,
+				  height: Game.obj["hazard_" + i].height
+				}));
+			}
+
+		Game.obj["hazard_" + i].add(new fabric.Circle({
+			left: Game.obj["hazard_" + i].x,
+			top: Game.obj["hazard_" + i].y,
+			fill: 'red',
+			radius: Game.obj["hazard_" + i].width / 2
+		})).onIntersect(Game.obj.ball, function() {
+			Game.obj.ball.reset();
+		});
 	});
 
 	// walls

@@ -119,7 +119,7 @@ Game.pointsBetween2 = function(a,b,c,d,p,q,r,s) {
 Game.buildMaze = function(canvas, mazeData) {
 	Game.findWalls(mazeData).map(function(v) {
 		return Game.buildWall(v[0] * 32, v[1] * 32, v[2] * 32, v[3] * 32);
-	}).collapse().forEach(function(v) {
+	}).flat().forEach(function(v) {
 		var wallID = Game.obj.walls.push(new Game.object(canvas)) - 1;
 
 		Game.obj.walls[wallID].add(new fabric.Line(v, {
@@ -219,6 +219,23 @@ Game.findID = function(maze, objID) {
 	return found;
 };
 
+Game.findIDs = function(maze, objID) {
+	return maze.Data.map(function(v, i) {
+		return v.map(function(w, j) {
+			if(w === objID) {
+				return {
+					x: j * maze.Scale,
+					y: i * maze.Scale
+				};
+			}
+		}).filter(function (el) {
+			return el != null;
+		});
+	}).filter(function (el) {
+		return el.length !== 0;
+	}).flat();
+};
+
 Game.buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wall
 	var wallz = [],
 		baseLine = new Game.Line(orix, oriy, tox, toy),
@@ -299,6 +316,28 @@ Game.object = function(canvas, attr) {
 	//these should be equal when the object is created
 	this.xt = this.x;
 	this.yt = this.y;
+
+	this.save(); //saves the init
+};
+
+Game.object.prototype.save= function() {
+	var save = {};
+
+	for(var key in this) {
+		save[key] = this[key];
+	}
+
+	this.state = save;
+
+	return this;
+};
+
+Game.object.prototype.reset = function() {
+	for(var key in this.state) {
+		this[key] = this.state[key];
+	}
+
+	return this.save();
 };
 
 Game.object.prototype.add = function(fabric) {
