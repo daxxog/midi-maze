@@ -31,114 +31,119 @@ r(function() {
 
 	var aLine = new Game.Line(0,0,0,0);
 
-	// create a ball object
-	var ballInit = Game.findID(Maze, 2);
+	Game.initLevel = function(_Maze) {
+	 	// create a ball object
+		var ballInit = Game.findID(_Maze, 2);
 
-	Game.obj.ball = new Game.object(canvas, {
-		x: ballInit.x,
-		y: ballInit.y,
-		width: 16,
-		height: 16,
-		solid: true
-	});
-
-		// debug bounding box
-		if(DEBUG) {
-			Game.obj.ball.add(new fabric.Rect({
-			  left: Game.obj.ball.x,
-			  top: Game.obj.ball.y,
-			  fill: 'red',
-			  width: Game.obj.ball.width,
-			  height: Game.obj.ball.height
-			}));
-		}
-
-		// a circle
-		Game.obj.ball.add(new fabric.Circle({
-		  left: Game.obj.ball.x,
-		  top: Game.obj.ball.y,
-		  fill: 'black',
-		  radius: Game.obj.ball.width / 2
-		})).setPreDraw(function() {
-			aLine = new Game.Line(Game.obj.ball.x, Game.obj.ball.y, mh.mouse.x, mh.mouse.y);
-			if(DEBUG) {
-				line.set(aLine.getSetter());
-			}
-
-			this.xAccel = -((aLine.x1 - aLine.x2)/300);
-			this.yAccel = -((aLine.y1 - aLine.y2)/300);
-			this.friction = 0.2;
-		}).setPostDraw(function() {
-		}).save();
-
-	// create an objective object
-	var objectiveInit = Game.findID(Maze, 3);
-
-	Game.obj.objective = new Game.object(canvas, {
-		x: objectiveInit.x,
-		y: objectiveInit.y,
-		width: 16,
-		height: 16,
-		solid: true
-	});
-
-		// debug bounding box
-		if(DEBUG) {
-			Game.obj.objective.add(new fabric.Rect({
-			  left: Game.obj.objective.x,
-			  top: Game.obj.objective.y,
-			  fill: 'red',
-			  width: Game.obj.objective.width,
-			  height: Game.obj.objective.height
-			}));
-		}
-
-	Game.obj.objective.add(new fabric.Circle({
-		left: Game.obj.objective.x,
-		top: Game.obj.objective.y,
-		fill: 'green',
-		radius: Game.obj.objective.width / 2
-	})).onIntersect(Game.obj.ball, function() {
-		if(alertOne) {
-			alert('good job');
-
-			alertOne = false;
-		}
-	});
-
-	// create an hazard object
-	Game.findIDs(Maze, 4).forEach(function(hazardInit, i) {
-		Game.obj["hazard_" + i] = new Game.object(canvas, {
-			x: hazardInit.x,
-			y: hazardInit.y,
-			width: 32,
-			height: 32,
+		Game.obj.ball = new Game.object(canvas, {
+			x: ballInit.x,
+			y: ballInit.y,
+			width: 16,
+			height: 16,
 			solid: true
 		});
 
 			// debug bounding box
 			if(DEBUG) {
-				Game.obj["hazard_" + i].add(new fabric.Rect({
-				  left: Game.obj["hazard_" + i].x,
-				  top: Game.obj["hazard_" + i].y,
-				  fill: 'green',
-				  width: Game.obj["hazard_" + i].width,
-				  height: Game.obj["hazard_" + i].height
+				Game.obj.ball.add(new fabric.Rect({
+				  left: Game.obj.ball.x,
+				  top: Game.obj.ball.y,
+				  fill: 'red',
+				  width: Game.obj.ball.width,
+				  height: Game.obj.ball.height
 				}));
 			}
 
-		Game.obj["hazard_" + i].add(new fabric.Circle({
-			left: Game.obj["hazard_" + i].x,
-			top: Game.obj["hazard_" + i].y,
-			fill: 'red',
-			radius: Game.obj["hazard_" + i].width / 2
-		})).onIntersect(Game.obj.ball, function() {
-			Game.obj.ball.reset();
-		});
-	});
+			// a circle
+			Game.obj.ball.add(new fabric.Circle({
+			  left: Game.obj.ball.x,
+			  top: Game.obj.ball.y,
+			  fill: 'black',
+			  radius: Game.obj.ball.width / 2
+			})).setPreDraw(function() {
+				aLine = new Game.Line(Game.obj.ball.x, Game.obj.ball.y, mh.mouse.x, mh.mouse.y);
+				if(DEBUG) {
+					line.set(aLine.getSetter());
+				}
 
-	// walls
-	Game.buildMaze(canvas, Maze.Data);
+				this.xAccel = -((aLine.x1 - aLine.x2)/300);
+				this.yAccel = -((aLine.y1 - aLine.y2)/300);
+				this.friction = 0.2;
+			}).setPostDraw(function() {
+			}).save();
+
+		// create an objective object
+		var objectiveInit = Game.findID(_Maze, 3);
+
+		Game.obj.objective = new Game.object(canvas, {
+			x: objectiveInit.x,
+			y: objectiveInit.y,
+			width: 16,
+			height: 16,
+			solid: true
+		});
+
+			// debug bounding box
+			if(DEBUG) {
+				Game.obj.objective.add(new fabric.Rect({
+				  left: Game.obj.objective.x,
+				  top: Game.obj.objective.y,
+				  fill: 'red',
+				  width: Game.obj.objective.width,
+				  height: Game.obj.objective.height
+				}));
+			}
+
+		Game.obj.objective.add(new fabric.Circle({
+			left: Game.obj.objective.x,
+			top: Game.obj.objective.y,
+			fill: 'green',
+			radius: Game.obj.objective.width / 2
+		})).onIntersect(Game.obj.ball, function() {
+			if(alertOne) {
+				alert('good job');
+				Game.clear();
+				
+				alertOne = false;
+			}
+		});
+
+		// create an hazard object
+		Game.findIDs(_Maze, 4).forEach(function(hazardInit, i) {
+			Game.obj["hazard_" + i] = new Game.object(canvas, {
+				x: hazardInit.x,
+				y: hazardInit.y,
+				width: 32,
+				height: 32,
+				solid: true
+			});
+
+				// debug bounding box
+				if(DEBUG) {
+					Game.obj["hazard_" + i].add(new fabric.Rect({
+					  left: Game.obj["hazard_" + i].x,
+					  top: Game.obj["hazard_" + i].y,
+					  fill: 'green',
+					  width: Game.obj["hazard_" + i].width,
+					  height: Game.obj["hazard_" + i].height
+					}));
+				}
+
+			Game.obj["hazard_" + i].add(new fabric.Circle({
+				left: Game.obj["hazard_" + i].x,
+				top: Game.obj["hazard_" + i].y,
+				fill: 'red',
+				radius: Game.obj["hazard_" + i].width / 2
+			})).onIntersect(Game.obj.ball, function() {
+				Game.obj.ball.reset();
+			});
+		});
+
+		// walls
+		Game.buildMaze(canvas, _Maze);
+	};
+
+	Game.initLevel(Maze[0]);
 
 	var tick = function() {
 		for(var objName in Game.obj) {

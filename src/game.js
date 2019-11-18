@@ -29,6 +29,23 @@ Game.intersects = function(a,b,c,d,p,q,r,s) {
   }
 };
 
+//remove everything from the Game window
+Game.clear = function() {
+	for(var name in Game.obj) {
+		if(name !== 'walls') {
+			Game.obj[name].destroy();
+		}
+	}
+
+	Game.obj.walls.forEach(function(wall) {
+		wall.destroy();
+	});
+
+	Game.objects = {};
+	Game.obj = Game.objects;
+	Game.obj.walls = [];
+};
+
 //Line class, formed by two points
 //used by buildWall function
 Game.Line = function(x1,y1,x2,y2) {
@@ -116,9 +133,9 @@ Game.pointsBetween2 = function(a,b,c,d,p,q,r,s) {
 	});
 };
 
-Game.buildMaze = function(canvas, mazeData) {
-	Game.findWalls(mazeData).map(function(v) {
-		return Game.buildWall(v[0] * 32, v[1] * 32, v[2] * 32, v[3] * 32);
+Game.buildMaze = function(canvas, _maze) {
+	Game.findWalls(_maze).map(function(v) {
+		return Game.buildWall(_maze, v[0] * 32, v[1] * 32, v[2] * 32, v[3] * 32);
 	}).flat().forEach(function(v) {
 		var wallID = Game.obj.walls.push(new Game.object(canvas)) - 1;
 
@@ -130,14 +147,14 @@ Game.buildMaze = function(canvas, mazeData) {
 	});
 };
 
-Game.findWalls = function(mazeData) {
+Game.findWalls = function(_maze) {
 	var skipa = {},
 		skipb = {},
 		skipc = {},
 		skipd = {},
 		lines = [];
 
-	mazeData.forEach(function(v, i, a) {
+	_maze.Data.forEach(function(v, i, a) {
 		v.forEach(function(w, j, b) {
 			var testa = 1, //horizontal
 				testb = 1, //vertical
@@ -236,10 +253,10 @@ Game.findIDs = function(maze, objID) {
 	}).flat();
 };
 
-Game.buildWall = function(orix, oriy, tox, toy) { //turn a line into a boxed wall
+Game.buildWall = function(mazeData, orix, oriy, tox, toy) { //turn a line into a boxed wall
 	var wallz = [],
 		baseLine = new Game.Line(orix, oriy, tox, toy),
-		thickness = Maze.Scale;
+		thickness = mazeData.Scale;
 		pLine1 = baseLine,
 		pLine2 = baseLine.parallel(thickness);
 
@@ -343,6 +360,17 @@ Game.object.prototype.reset = function() {
 Game.object.prototype.add = function(fabric) {
 	this.canvas.add(fabric);
 	this.fabrics.push(fabric);
+
+	return this;
+};
+
+//removes the sprite from the fabric
+Game.object.prototype.destroy = function() {
+	var that = this;
+
+	this.fabrics.forEach(function(fabric) {
+		that.canvas.remove(fabric);
+	});
 
 	return this;
 };
