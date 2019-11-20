@@ -1,1 +1,1 @@
-var libsJSONP = {"fabric.min.js":"https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.4.0/fabric.min.js","arian.pngjs.0.2.2.browserify.min.js":"https://gist.githubusercontent.com/daxxog/ae021ef5244721d9a932010308e2531d/raw/1573807911c959d71985bbf7d1be7bce990c2669/arian.pngjs.0.2.2.browserify.min.js"};
+var libsJSONP = {"fabric.min.js":"https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.4.0/fabric.min.js","arian.pngjs.0.2.2.browserify.min.js":"https://daxxog.s3.amazonaws.com/js/arian/pngjs/arian.pngjs.0.2.2.browserify.min.js"};
