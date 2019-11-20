@@ -16,6 +16,7 @@ Game.obj = Game.objects;
 Game.obj.walls = [];
 Game.events = [];
 Game.level = 0;
+Game.levels = {};
 
 Game.addEvent = function(event) {
 	Game.events.push(event);
@@ -25,6 +26,44 @@ Game.processEvents = function() {
 	if(Game.events.length > 0) {
 		Game.events.pop()();
 	}
+};
+
+Game.convertPixel = function(pixel) {
+	var red   = pixel[0],
+		green = pixel[1],
+		blue  = pixel[2],
+		alpha = pixel[3];
+
+	if((red===255) && (green===255) && (blue===255) && (alpha===255)) {
+		return 0; //white: blank
+	} else if((red===0) && (green===0) && (blue===0) && (alpha===255)) {
+		return 1; //black: walls
+	} else if((red===0) && (green===0) && (blue===255) && (alpha===255)) {
+		return 2; //blue: starting position
+	} else if((red===0) && (green===255) && (blue===0) && (alpha===255)) {
+		return 3; //green: goal
+	} else if((red===255) && (green===0) && (blue===0) && (alpha===255)) {
+		return 4; //red: hazard
+	} else {
+		return pixel;
+	}
+};
+
+Game.convertPixels = function(png) {
+	var md = [];
+
+	for(var i=0; i<png.height; i++) {
+		md.push([]);
+
+		for(var j=0; j<png.width; j++) {
+			md[i].push(Game.convertPixel(png.getPixel(j, i)));
+		}
+	}
+
+	return {
+		Scale: ((640 / png.width) + (480 / png.height)) / 2,
+		Data: md
+	};
 };
 
 // returns true iff the line from (a,b)->(c,d) intersects with (p,q)->(r,s)

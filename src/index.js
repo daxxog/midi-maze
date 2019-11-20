@@ -103,8 +103,14 @@ r(function() {
 			Game.addEvent(function() {
 				console.log('level finished: ' + Game.level);
 				Game.clear();
-				Game.level++;
-				Game.initLevel(Maze[Game.level]);
+
+				if(Game.level === Game.levels.length) {
+					Game.level = 0; //wrap around
+				} else {
+					Game.level++;
+				}
+				
+				Game.initLevel(Game.levels[Game.level]);
 			});
 		});
 
@@ -143,7 +149,33 @@ r(function() {
 		Game.buildMaze(canvas, _Maze);
 	};
 
-	Game.initLevel(Maze[Game.level]);
+	Game.levels.length = window.Maze.length;
+
+	for(var key in window.Maze) {
+		((function(key, value, object) {
+			if(key !== "length") {
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', value, true);
+				xhr.responseType = 'arraybuffer';
+
+				xhr.onload = function(e){
+					if (this.status == 200){
+						var reader = new PNGReader(this.response);
+						reader.parse(function(err, png){
+							if (err) throw err;
+							Game.levels[key] = Game.convertPixels(png);
+
+							if((+key) === 0) { //if the first level, load it
+								Game.initLevel(Game.levels[key]);
+							}
+						});
+					}
+				};
+
+				xhr.send();
+			}
+		})(key, window.Maze[key], window.Maze));
+	}
 
 	var tick = function() {
 		for(var objName in Game.obj) {
