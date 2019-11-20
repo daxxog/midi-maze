@@ -14,7 +14,7 @@ for(var local in libs) {
 	pyFile += "print(remote)\n";
 	pyFile += "urllib.request.urlretrieve(remote, local)\n\n";
 
-	shFile += "curl -L " + remote + " > " + local;
+	shFile += "curl -L " + remote + " > " + local + '\n\n';
 }
 
 if(process.argv[2] === 'sh') {

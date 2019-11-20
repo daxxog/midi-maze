@@ -100,12 +100,12 @@ r(function() {
 			fill: 'green',
 			radius: Game.obj.objective.width / 2
 		})).onIntersect(Game.obj.ball, function() {
-			if(alertOne) {
-				alert('good job');
+			Game.addEvent(function() {
+				console.log('level finished: ' + Game.level);
 				Game.clear();
-				
-				alertOne = false;
-			}
+				Game.level++;
+				Game.initLevel(Maze[Game.level]);
+			});
 		});
 
 		// create an hazard object
@@ -143,7 +143,7 @@ r(function() {
 		Game.buildMaze(canvas, _Maze);
 	};
 
-	Game.initLevel(Maze[0]);
+	Game.initLevel(Maze[Game.level]);
 
 	var tick = function() {
 		for(var objName in Game.obj) {
@@ -160,6 +160,8 @@ r(function() {
 				Game.obj[objName].postDraw();
 			}
 		}
+
+		Game.processEvents(); //do events after we have done all the stuff with objects
 
 		Game.ticks++;
 

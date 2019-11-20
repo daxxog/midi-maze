@@ -14,6 +14,18 @@ Game.objects = {};
 Game.walls = {};
 Game.obj = Game.objects;
 Game.obj.walls = [];
+Game.events = [];
+Game.level = 0;
+
+Game.addEvent = function(event) {
+	Game.events.push(event);
+};
+
+Game.processEvents = function() {
+	if(Game.events.length > 0) {
+		Game.events.pop()();
+	}
+};
 
 // returns true iff the line from (a,b)->(c,d) intersects with (p,q)->(r,s)
 // https://stackoverflow.com/a/24392281
@@ -44,6 +56,7 @@ Game.clear = function() {
 	Game.objects = {};
 	Game.obj = Game.objects;
 	Game.obj.walls = [];
+	Game.walls = {};
 };
 
 //Line class, formed by two points
@@ -504,20 +517,29 @@ Game.object.prototype.draw = function() {
 			didIntersect = false,
 			objName = Game.findObjectNameById(objID);
 
-		this.getBounds().forEach(function(v) {
-			Game.obj[objName].getBounds().forEach(checkObj(v));
-		});
+		if(typeof Game.obj[objName] !== 'undefined') {
+			this.getBounds().forEach(function(v) {
+				Game.obj[objName].getBounds().forEach(checkObj(v));
+			});
 
-		didIntersect = oIntersects.reduce(function(a,c) {
-			return a || c;
-		});
+			if(oIntersects.length > 0) {
+				didIntersect = oIntersects.reduce(function(a,c) {
+					return a || c;
+				});
+			}
 
-		if(didIntersect) {
-			this.doOnIntersect[objID]();
-		}
+			if(didIntersect) {
+				this.doOnIntersect[objID]();
+			}
 
-		if((Game.obj[objName].solid === true) && (this.solid === true)) {
-			intersections.push(didIntersect);
+			try{
+				if((Game.obj[objName].solid === true) && (this.solid === true)) {
+					intersections.push(didIntersect);
+				}
+			} catch(e) {
+				console.log(objName, Game.obj);
+				console.log(e);
+			}
 		}
 	}
 
