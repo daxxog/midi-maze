@@ -1,6 +1,6 @@
 window.Maze = {
        "length": 2,
-       "0": "https://i.ibb.co/Xs8QPNm/maze-hard.png",
-       "1": "https://i.ibb.co/X4pr8f9/1.png",
-       "2": "https://i.ibb.co/JymrtyF/maze-level.png"
+       "0": "https://i.ibb.co/X4pr8f9/1.png",
+       "1": "https://i.ibb.co/JymrtyF/maze-level.png",
+       "2": "https://i.ibb.co/Xs8QPNm/maze-hard.png"
 };

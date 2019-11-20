@@ -262,7 +262,7 @@ Game.findWalls = function(_maze) {
 
 				//push found diagonal / walls
 				if(testd > 2) {
-					lines.push([j, i, j - testd, i + testd]);
+					lines.push([j + 1, i - 1, 1 + j - testd, i + testd - 1]);
 				}
 			}
 		});

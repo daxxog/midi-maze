@@ -33,13 +33,14 @@ r(function() {
 
 	Game.initLevel = function(_Maze) {
 	 	// create a ball object
-		var ballInit = Game.findID(_Maze, 2);
+		var ballInit = Game.findID(_Maze, 2),
+			ballSize = 16;
 
 		Game.obj.ball = new Game.object(canvas, {
-			x: ballInit.x,
-			y: ballInit.y,
-			width: 16,
-			height: 16,
+			x: ballInit.x + (ballSize / 2),
+			y: ballInit.y + (ballSize / 2),
+			width: ballSize,
+			height: ballSize,
 			solid: true
 		});
 
@@ -109,7 +110,7 @@ r(function() {
 				} else {
 					Game.level++;
 				}
-				
+
 				Game.initLevel(Game.levels[Game.level]);
 			});
 		});
