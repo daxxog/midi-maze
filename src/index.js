@@ -31,6 +31,22 @@ r(function() {
 
 	var aLine = new Game.Line(0,0,0,0);
 
+	//when we finish a level
+	var onWin = function() {
+		console.log('level finished: ' + Game.level);
+		Game.clear();
+
+		if(Game.level === Game.levels.length) {
+			Game.level = 0; //wrap around
+		} else {
+			Game.level++;
+		}
+
+		Game.initLevel(Game.levels[Game.level]);
+	};
+
+	Game.instawin = onWin; //incase we wanna cheat past a level using the JS console
+
 	Game.initLevel = function(_Maze) {
 	 	// create a ball object
 		var ballInit = Game.findID(_Maze, 2),
@@ -101,18 +117,7 @@ r(function() {
 			fill: 'green',
 			radius: Game.obj.objective.width / 2
 		})).onIntersect(Game.obj.ball, function() {
-			Game.addEvent(function() {
-				console.log('level finished: ' + Game.level);
-				Game.clear();
-
-				if(Game.level === Game.levels.length) {
-					Game.level = 0; //wrap around
-				} else {
-					Game.level++;
-				}
-
-				Game.initLevel(Game.levels[Game.level]);
-			});
+			Game.addEvent(onWin);
 		});
 
 		// create an hazard object
